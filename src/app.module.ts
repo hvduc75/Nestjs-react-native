@@ -5,9 +5,10 @@ import { UsersModule } from './modules/users/users.module';
 import { DatabaseModule } from './core/config/DatabaseModule';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { TransformInterceptor } from './core/interceptors/response.interceptor';
+import { AuthModule } from './core/auth/auth.module';
 
 @Module({
-  imports: [UsersModule, DatabaseModule],
+  imports: [UsersModule, DatabaseModule, AuthModule],
   controllers: [AppController],
   providers: [
     AppService,
