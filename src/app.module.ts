@@ -9,9 +9,10 @@ import { TransformInterceptor } from './core/interceptors/response.interceptor';
 import { AuthModule } from './core/auth/auth.module';
 import { JwtAuthGuard } from './core/auth/passport/jwt-auth.guard';
 import { UploadModule } from './modules/upload/upload.module';
+import { RedisConfigModule } from './core/config/redis.config';
 
 @Module({
-  imports: [UsersModule, DatabaseModule, AuthModule, SongModule, UploadModule],
+  imports: [UsersModule, DatabaseModule, AuthModule, SongModule, UploadModule, RedisConfigModule],
   controllers: [AppController],
   providers: [
     AppService,

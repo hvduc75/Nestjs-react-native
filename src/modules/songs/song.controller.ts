@@ -4,6 +4,7 @@ import {
   Body,
   UseInterceptors,
   UploadedFiles,
+  Get,
 } from '@nestjs/common';
 import { SongService } from './song.service';
 import { ZodValidationPipe } from 'nestjs-zod';
@@ -35,5 +36,10 @@ export class SongController {
       files.imageUrl?.[0], 
       files.songUrl?.[0],
     );
+  }
+
+  @Get('get-Recommend-Songs')
+  async getRecommendSongs() {
+    return await this.songService.getRecommendSongs();
   }
 }

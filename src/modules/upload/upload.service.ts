@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
-import { MulterFile } from './interfaces/multer-file.interface';
+import { MulterFile } from './dto/multer-file.dto';
 
 @Injectable()
 export class UploadService {
@@ -18,7 +18,7 @@ export class UploadService {
               return reject(new Error('Upload failed, result is undefined'));
             }
 
-            resolve(result.secure_url); // Chỉ truy cập khi chắc chắn result tồn tại
+            resolve(result.secure_url); 
           },
         )
         .end(file.buffer);

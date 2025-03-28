@@ -14,7 +14,7 @@ import { ConfigModule } from '@nestjs/config';
       database: process.env.DB_NAME,
       autoLoadEntities: true,
       synchronize: true,
-      logging: true, // Hiện log SQL để debug
+      logging: true,
     }),
   ],
 })
