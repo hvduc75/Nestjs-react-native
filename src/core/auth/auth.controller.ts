@@ -21,4 +21,11 @@ export class AuthController {
   register(@Body() registerDto: CreateAuthDto) {
     return this.authService.handleRegister(registerDto);
   }
+
+  @Post('google')
+  @Public()
+  async googleLogin(@Body('idToken') idToken: string) {
+    const userData = await this.authService.verifyToken(idToken);
+    return { message: 'Login successful', user: userData };
+  }
 }

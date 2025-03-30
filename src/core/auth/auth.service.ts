@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { comparePasswordHelper } from '../helpers/utils';
 import { UsersService } from '../../modules/users/users.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
+import admin from '../config/firebase.config';
 
 @Injectable()
 export class AuthService {
@@ -34,5 +35,14 @@ export class AuthService {
 
   async handleRegister(registerDto: CreateAuthDto) {
     return await this.usersService.create(registerDto);
+  }
+
+  async verifyToken(idToken: string) {
+    try {
+      const decodedToken = await admin.auth().verifyIdToken(idToken);
+      return decodedToken; // Trả về thông tin user từ token
+    } catch (error) {
+      throw new Error('Invalid token');
+    }
   }
 }

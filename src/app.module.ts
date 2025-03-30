@@ -10,9 +10,22 @@ import { AuthModule } from './core/auth/auth.module';
 import { JwtAuthGuard } from './core/auth/passport/jwt-auth.guard';
 import { UploadModule } from './modules/upload/upload.module';
 import { RedisConfigModule } from './core/config/redis.config';
+import * as redisStore from 'cache-manager-redis-store';
+import { CacheModule, CacheModuleOptions } from '@nestjs/cache-manager';
 
 @Module({
-  imports: [UsersModule, DatabaseModule, AuthModule, SongModule, UploadModule, RedisConfigModule],
+  imports: [
+    UsersModule,
+    DatabaseModule,
+    AuthModule,
+    SongModule,
+    UploadModule,
+    RedisConfigModule,
+    // CacheModule.register({
+    //   store: redisStore,
+    //   url: 'redis://localhost:6379',
+    // }),
+  ],
   controllers: [AppController],
   providers: [
     AppService,

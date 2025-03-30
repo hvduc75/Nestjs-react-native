@@ -51,7 +51,7 @@ export class SongService {
       const result = await this.cacheManager.set(
         cacheKey,
         JSON.stringify(songs),
-        // 20*10,
+        200000,
       );
       console.log('Saved to cache:', result);
     } catch (error) {
