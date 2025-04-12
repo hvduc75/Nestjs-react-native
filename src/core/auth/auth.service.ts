@@ -16,8 +16,8 @@ export class AuthService {
     const user = await this.usersService.findByEmail(username);
     if (!user) return null;
 
-    // const isValidPassword = await comparePasswordHelper(pass, user.password);
-    // if (!isValidPassword) return null;
+    const isValidPassword = await comparePasswordHelper(pass, user.password);
+    if (!isValidPassword) return null;
     return user;
   }
 

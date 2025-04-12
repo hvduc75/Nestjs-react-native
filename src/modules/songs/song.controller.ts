@@ -55,6 +55,7 @@ export class SongController {
   }
 
   @Get('get-all-songs')
+  @Public()
   async getAllSongs() {
     return await this.songService.getAllSongs();
   }

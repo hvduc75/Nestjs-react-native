@@ -6,6 +6,12 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+export enum SongStatus {
+  PENDING = 'pending',
+  SUCCESS = 'success',
+  CANCEL = 'cancel',
+}
+
 @Entity({ name: 'songs' }) // Định nghĩa entity, ánh xạ với bảng `songs`
 export class Song {
   @PrimaryGeneratedColumn() // Tự động tăng ID
@@ -25,6 +31,13 @@ export class Song {
 
   @Column({ default: 0 })
   play_count: number;
+
+  @Column({
+    type: 'enum',
+    enum: SongStatus,
+    default: SongStatus.PENDING, // Mặc định là 'pending'
+  })
+  status: SongStatus;
 
   @CreateDateColumn() // Ngày tạo
   createdAt: Date;

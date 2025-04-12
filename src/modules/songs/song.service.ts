@@ -79,38 +79,47 @@ export class SongService {
       throw new BadRequestException('Invalid file URL');
     }
 
+    console.log('Headers:', req.headers);
     const range = req.headers['range'] as string | undefined;
     if (!range) {
-      return this.streamFullFile(fileUrl, res);
+      console.log('No range header provided, streaming partial file...');
+      // Giả lập một yêu cầu Range để trả về 1MB đầu tiên
+      const partialRange = 'bytes=0-1048575'; // 1MB = 1024 * 1024 bytes
+      const response = await axios.get(fileUrl, {
+        responseType: 'stream',
+        headers: { Range: partialRange },
+      });
+
+      const fileStream = response.data;
+      const headers = response.headers;
+
+      res.set({
+        'Content-Type': headers['content-type'],
+        'Content-Length': headers['content-length'],
+        'Content-Range': headers['content-range'],
+        'Accept-Ranges': 'bytes',
+      });
+      res.status(206); // Partial Content
+      fileStream.pipe(res);
+      return;
+      // return this.streamFullFile(fileUrl, res);
     }
+    console.log('Range:', range);
 
     try {
       const response = await axios.get(fileUrl, {
         responseType: 'stream',
         headers: { Range: range },
       });
+
       const fileStream = response.data;
-      const fileSize = parseInt(response.headers['content-length'], 10);
-
-      const data = await axios.get(fileUrl, {
-        responseType: 'stream',
-      });
-      const totalFileSize = parseInt(data.headers['content-length'], 10);
-
-      const rangeHeader = range.match(/bytes=(\d+)-(\d+)?/);
-      if (!rangeHeader) {
-        throw new BadRequestException('Invalid range header');
-      }
-      let start = parseInt(rangeHeader[1], 10);
-      let end = rangeHeader[2] ? parseInt(rangeHeader[2], 10) : fileSize - 1;
-
-      const contentLength = end - start + 1;
+      const headers = response.headers;
 
       res.set({
-        'Content-Range': `bytes ${start}-${end}/${totalFileSize}`,
+        'Content-Type': headers['content-type'],
+        'Content-Length': headers['content-length'],
+        'Content-Range': headers['content-range'],
         'Accept-Ranges': 'bytes',
-        'Content-Length': contentLength,
-        'Content-Type': 'audio/mpeg',
       });
       res.status(206);
       fileStream.pipe(res);
@@ -140,6 +149,7 @@ export class SongService {
         name: true,
         artist: true,
         imageUrl: true,
+        songUrl: true,
       },
     });
     return songs;

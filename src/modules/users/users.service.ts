@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entity/user.entity';
+import { hashPasswordHelper } from 'src/core/helpers/utils';
 
 @Injectable()
 export class UsersService {
@@ -24,6 +25,13 @@ export class UsersService {
         `Email đã tồn tại: ${createUserDto.email}. Vui lòng sử dụng email khác.`,
       );
     }
+    console.log('createUserDto', createUserDto);
+    let hashPassword = await hashPasswordHelper(createUserDto.password);
+    console.log('hashPassword', hashPassword);
+    if (!hashPassword) {
+      throw new BadRequestException('Hashing password failed.');
+    }
+    createUserDto.password = hashPassword;
     const user = this.userRepository.create(createUserDto);
     return await this.userRepository.save(user);
   }

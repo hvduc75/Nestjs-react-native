@@ -13,6 +13,9 @@ export class User {
 
   @Column() // Mật khẩu
   password: string;
+  
+  @Column({ default: 'User' }) // Quyền hạn, mặc định là 'user'
+  role: string; // Quyền hạn, mặc định là 'user'
 
   @CreateDateColumn() // Ngày tạo
   createdAt: Date;
