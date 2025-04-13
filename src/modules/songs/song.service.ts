@@ -9,6 +9,9 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { createReadStream, statSync } from 'fs';
 import { Response } from 'express';
 import axios from 'axios';
+import { UsersService } from '../users/users.service';
+import { NotificationService } from '../notifications/notification.service';
+import { GatewayService } from '../gateway/gateway.service';
 
 @Injectable()
 export class SongService {
@@ -16,6 +19,9 @@ export class SongService {
     @InjectRepository(Song)
     private readonly songRepository: Repository<Song>,
     private readonly uploadService: UploadService,
+    private readonly userService: UsersService,
+    private readonly notificationRepo: NotificationService,
+    private readonly socketGateway: GatewayService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
@@ -31,8 +37,38 @@ export class SongService {
       createSongDto.songUrl = await this.uploadService.uploadFile(songFile);
     }
 
-    const song = this.songRepository.create(createSongDto);
-    return await this.songRepository.save(song);
+    const song = this.songRepository.create({
+      name: createSongDto.songName,
+      ...createSongDto,
+    });
+    let data = await this.songRepository.save(song);
+    // Gửi thông báo đến Admins
+    const admins = await this.userService.getAllAdmins(); // Lấy danh sách admin từ UserService
+    console.log('Admins:', admins);
+    await Promise.all(
+      admins.map(async (admin) => {
+        const notification = await this.notificationRepo.createNotification(
+          `Bài hát "${song.name}" đang chờ duyệt.`,
+          admin.id,
+          song.id,
+        );
+
+        console.log(
+          `Notification created for admin ${admin.id}: ${notification.message}`)
+    
+        const socketId = this.socketGateway.userSocketMap.get(admin.id);
+        if (socketId) {
+          this.socketGateway.server.to(socketId).emit('new-notification', {
+            message: notification.message,
+            songId: song.id,
+            createdAt: notification.createdAt,
+          });
+        } else {
+          console.warn(`Admin ${admin.id} is not connected via WebSocket.`);
+        }
+      }),
+    );
+    return data;
   }
 
   async getRecommendSongs() {

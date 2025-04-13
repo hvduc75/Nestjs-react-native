@@ -12,6 +12,8 @@ import { UploadModule } from './modules/upload/upload.module';
 import { RedisConfigModule } from './core/config/redis.config';
 import * as redisStore from 'cache-manager-redis-store';
 import { CacheModule, CacheModuleOptions } from '@nestjs/cache-manager';
+import { NotificationModule } from './modules/notifications/notification.module';
+import { GatewayModule } from './modules/gateway/gateway.module';
 
 @Module({
   imports: [
@@ -21,6 +23,8 @@ import { CacheModule, CacheModuleOptions } from '@nestjs/cache-manager';
     SongModule,
     UploadModule,
     RedisConfigModule,
+    NotificationModule,
+    GatewayModule,
     // CacheModule.register({
     //   store: redisStore,
     //   url: 'redis://localhost:6379',

@@ -47,4 +47,10 @@ export class UsersService {
   async findByEmail(email: string) {
     return await this.userRepository.findOne({ where: { email } });
   }
+
+  async getAllAdmins() {
+    return await this.userRepository.find({
+      where: { role: 'Admin' },
+    });
+  }
 }

@@ -20,7 +20,7 @@ export class Song {
   @Column({ length: 100 }) // Tên bài hát, max 100 ký tự
   name: string;
 
-  @Column()
+  @Column({ nullable: true })
   artist: string;
 
   @Column({ nullable: true })

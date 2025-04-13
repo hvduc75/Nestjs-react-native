@@ -21,24 +21,25 @@ export class SongController {
   constructor(private readonly songService: SongService) {}
 
   @Post('create')
+  @Public()
   @UseInterceptors(
     FileFieldsInterceptor([
-      { name: 'imageUrl', maxCount: 1 },
-      { name: 'songUrl', maxCount: 1 },
+      { name: 'Image', maxCount: 1 },
+      { name: 'Audio', maxCount: 1 },
     ]),
   )
   async create(
     @Body() createSongDto: CreateSongDto,
     @UploadedFiles()
     files: {
-      imageUrl?: Express.Multer.File[];
-      songUrl?: Express.Multer.File[];
+      Image?: Express.Multer.File[];
+      Audio?: Express.Multer.File[];
     },
   ) {
     return await this.songService.create(
       createSongDto,
-      files.imageUrl?.[0],
-      files.songUrl?.[0],
+      files.Image?.[0],
+      files.Audio?.[0],
     );
   }
 
